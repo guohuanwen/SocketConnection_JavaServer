@@ -29,7 +29,7 @@ public class MinaServer {
 			// 指定protobuf的编码器和解码器  
 	        acceptor.getFilterChain().addLast("codec",  
 	                new ProtocolCodecFilter(new MinaProtobufEncoder(), new MinaProtobufDecoder()));  
-			acceptor.bind(new InetSocketAddress(12345));
+			acceptor.bind(new InetSocketAddress(7850));
 			
 			
 		} catch (IOException e) {

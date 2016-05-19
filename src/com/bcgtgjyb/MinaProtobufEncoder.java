@@ -1,24 +1,38 @@
 package com.bcgtgjyb;
 
+import java.nio.ByteBuffer;
+
 import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolEncoderAdapter;
 import org.apache.mina.filter.codec.ProtocolEncoderOutput;
+import org.apache.mina.util.byteaccess.BufferByteArray;
 
-public class MinaProtobufEncoder extends ProtocolEncoderAdapter {  
-  
-    
-    public void encode(IoSession session, Object message,  
-            ProtocolEncoderOutput out) throws Exception {  
-    	Notice.rq_game_changeDirection r = (Notice.rq_game_changeDirection)message;
-        byte[] bytes = r.toByteArray(); // Student对象转为protobuf字节码  
-        int type = 1;
-        int length = bytes.length;  
-        IoBuffer buffer = IoBuffer.allocate(length + 8);  
-        buffer.putInt(type);
-        buffer.putInt(length); // write header  
-        buffer.put(bytes); // write body  
-        buffer.flip();  
-        out.write(buffer);  
-    }  
-} 
+import com.google.protobuf.GeneratedMessage;
+
+public class MinaProtobufEncoder extends ProtocolEncoderAdapter {
+
+	public void encode(IoSession session, Object message,
+			ProtocolEncoderOutput out) throws Exception {
+		if (message instanceof Notice.rs_util_heartbeat) {
+			System.out.println("rs_util_heartbeat");
+			sendOut((GeneratedMessage) message, 1, out);
+		}
+		if (message instanceof Notice.rs_receiver_message) {
+			System.out.println("rs_receiver_message");
+			sendOut((GeneratedMessage) message, 3, out);
+		}
+	}
+
+	public void sendOut(GeneratedMessage generatedMessage, int type,
+			ProtocolEncoderOutput tcpOperate) {
+		byte[] bytes = generatedMessage.toByteArray();
+		int length = bytes.length;
+		IoBuffer  byteBuffer = IoBuffer.allocate(8 + length);
+		byteBuffer.putInt(type);
+		byteBuffer.putInt(length);
+		byteBuffer.put(bytes);
+		byteBuffer.flip();
+		tcpOperate.write(byteBuffer);
+	}
+}

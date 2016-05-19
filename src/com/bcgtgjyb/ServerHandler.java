@@ -2,6 +2,8 @@ package com.bcgtgjyb;
 import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IoSession;
 
+import com.google.protobuf.GeneratedMessage;
+
 /**
  * 
  *    HelloHandler 负责业务逻辑处理
@@ -43,14 +45,16 @@ public class ServerHandler extends IoHandlerAdapter{
     public void messageReceived(IoSession session, Object message)
             throws Exception {
         String clientIP = session.getRemoteAddress().toString();
-        System.out.println("服务端接收到来自IP:"+clientIP+"的消息:"+message );
-        Notice.rq_game_changeDirection m = (Notice.rq_game_changeDirection)message;
-        if (m.getDirection() == 0){
-        	Notice.rq_game_changeDirection r = Notice.rq_game_changeDirection.newBuilder().setDirection(0).setUid("heart beat").build();
-    		session.write(r);
+        System.out.println("服务端接收到来自IP:"+clientIP+"的消息:" +message);
+        if (message instanceof Notice.rq_util_heartbeat){
+        	System.out.println("rq_util_heartbeat");
+        	PacketSender.sendHeartbeat(session);
         }
-        Notice.rq_game_changeDirection r = Notice.rq_game_changeDirection.newBuilder().setDirection(1).setUid("hello client").build();
-		session.write(r);
+        if (message instanceof Notice.rq_send_message){
+        	Notice.rq_send_message rq = (Notice.rq_send_message)message;
+        	System.out.println("rq_send_message");
+        	PacketSender.sendMessage(session, "server:"+rq.getRqText());
+        }
     }
     
     /**

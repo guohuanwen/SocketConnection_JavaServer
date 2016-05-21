@@ -22,9 +22,12 @@ public class PacketSender {
         send(rq_util_heartbeat,tcpOperate);
     }
 
-    public static void sendMessage(IoSession tcpOperate,String text) throws Exception {
-    	Notice.rs_receiver_message rsMessage = Notice.rs_receiver_message.newBuilder()
-    			.setRsText("service: "+text)
+    public static void sendMessage(IoSession tcpOperate,String text,int sendid,int receiverid) throws Exception {
+    	Notice.chat_message rsMessage = Notice.chat_message.newBuilder()
+    			.setRqText(text)
+    			.setReceiverid(receiverid)
+    			.setSendid(sendid)
+    			.setTime(System.currentTimeMillis())
     			.build();
         send(rsMessage,tcpOperate);
     }

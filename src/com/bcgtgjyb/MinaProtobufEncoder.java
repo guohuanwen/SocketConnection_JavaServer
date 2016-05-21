@@ -18,9 +18,9 @@ public class MinaProtobufEncoder extends ProtocolEncoderAdapter {
 			System.out.println("rs_util_heartbeat");
 			sendOut((GeneratedMessage) message, 1, out);
 		}
-		if (message instanceof Notice.rs_receiver_message) {
+		if (message instanceof Notice.chat_message) {
 			System.out.println("rs_receiver_message");
-			sendOut((GeneratedMessage) message, 3, out);
+			sendOut((GeneratedMessage) message, 2, out);
 		}
 	}
 

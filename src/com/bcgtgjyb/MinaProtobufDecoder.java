@@ -34,7 +34,7 @@ public class MinaProtobufDecoder extends CumulativeProtocolDecoder {
 							.parseFrom(bodyBytes);
 					out.write(rHeartbeat);
 				} else if (type == 2) {
-					Notice.rq_send_message rMessage = Notice.rq_send_message
+					Notice.chat_message rMessage = Notice.chat_message
 							.parseFrom(bodyBytes);
 					out.write(rMessage);
 				}

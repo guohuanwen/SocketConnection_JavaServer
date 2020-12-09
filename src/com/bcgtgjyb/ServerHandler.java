@@ -5,86 +5,73 @@ import java.util.Collection;
 import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IoSession;
 
-import com.google.protobuf.GeneratedMessage;
-
 /**
- * 
- * HelloHandler ¸ºÔğÒµÎñÂß¼­´¦Àí
- * 
- * ¹¦ ÄÜ£º TODO Àà Ãû£º HelloHandler.java
- * 
- * ver ‰ä¸üÈÕ ½ÇÉ« µ£µ±Õß ‰ä¸üÄÚÈİ ©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤ V1.00
- * 2013-2-21 Ä£¿é ËÕÈôÄê ³õ°æ
- * 
- * Copyright (c) 2013 dennisit corporation All Rights Reserved.
- * 
- * Email:<a href="mailto:DennisIT@163.com">·¢ËÍÓÊ¼ş</a>
- * 
+ * HelloHandler è´Ÿè´£ä¸šåŠ¡é€»è¾‘å¤„ç†
  */
 public class ServerHandler extends IoHandlerAdapter {
 
-	/**
-	 * ÓĞĞÂÁ¬½ÓÊ±´¥·¢
-	 */
-	@Override
-	public void sessionOpened(IoSession session) throws Exception {
-		System.out.println("·şÎñ¶Ë, session open for "
-				+ session.getRemoteAddress());
-	}
+    /**
+     * æœ‰æ–°è¿æ¥æ—¶è§¦å‘
+     */
+    @Override
+    public void sessionOpened(IoSession session) throws Exception {
+        System.out.println("æœåŠ¡ç«¯, session open for "
+                + session.getRemoteAddress());
+    }
 
-	/**
-	 * Á¬½Ó¹Ø±ÕÊ±´¥·¢
-	 */
-	@Override
-	public void sessionClosed(IoSession session) throws Exception {
-		System.out.println("·şÎñ¶Ë, session closed from "
-				+ session.getRemoteAddress());
-	}
+    /**
+     * è¿æ¥å…³é—­æ—¶è§¦å‘
+     */
+    @Override
+    public void sessionClosed(IoSession session) throws Exception {
+        System.out.println("æœåŠ¡ç«¯, session closed from "
+                + session.getRemoteAddress());
+    }
 
-	/**
-	 * ÊÕµ½À´×Ô¿Í»§¶ËµÄÏûÏ¢
-	 */
-	@Override
-	public void messageReceived(IoSession session, Object message)
-			throws Exception {
-		String clientIP = session.getRemoteAddress().toString();
-		System.out.println("·şÎñ¶Ë½ÓÊÕµ½À´×ÔIP:" + clientIP + "µÄÏûÏ¢:" + message);
-		if (message instanceof Notice.rq_util_heartbeat) {
-			System.out.println("rq_util_heartbeat");
-			PacketSender.sendHeartbeat(session);
-		}
-		if (message instanceof Notice.chat_message) {
-			// ÄÃµ½ËùÓĞµÄ¿Í»§¶ËSession
-			Collection<IoSession> sessions = session.getService()
-					.getManagedSessions().values();
-			for (IoSession sess : sessions) {
-				// sess.write(datetime + "\t" + content);
-				if (sess.equals(session)) {
-					System.out.println("ss yes");
-				} else {
-					System.out.println("ss no");
-					Notice.chat_message chat = (Notice.chat_message) message;
-					sess.write(chat);
-				}
-			}
-		}
-	}
+    /**
+     * æ”¶åˆ°æ¥è‡ªå®¢æˆ·ç«¯çš„æ¶ˆæ¯
+     */
+    @Override
+    public void messageReceived(IoSession session, Object message)
+            throws Exception {
+        String clientIP = session.getRemoteAddress().toString();
+        System.out.println("æœåŠ¡ç«¯æ¥æ”¶åˆ°æ¥è‡ªIP:" + clientIP + "çš„æ¶ˆæ¯:" + message);
+        if (message instanceof Notice.rq_util_heartbeat) {
+            System.out.println("rq_util_heartbeat");
+            PacketSender.sendHeartbeat(session);
+        }
+        if (message instanceof Notice.chat_message) {
+            // æ‹¿åˆ°æ‰€æœ‰çš„å®¢æˆ·ç«¯Session
+            Collection<IoSession> sessions = session.getService()
+                    .getManagedSessions().values();
+            for (IoSession sess : sessions) {
+                // sess.write(datetime + "\t" + content);
+                if (sess.equals(session)) {
+                    System.out.println("ss yes");
+                } else {
+                    System.out.println("ss no");
+                    Notice.chat_message chat = (Notice.chat_message) message;
+                    sess.write(chat);
+                }
+            }
+        }
+    }
 
-	/**
-	 * µ±ÓĞÒì³£·¢ÉúÊ±´¥·¢
-	 */
-	@Override
-	public void exceptionCaught(IoSession session, Throwable cause)
-			throws Exception {
-		System.out.println("·şÎñ¶Ë,·¢ÉúÒì³£" + cause.getMessage());
-		session.close();
-	}
+    /**
+     * å½“æœ‰å¼‚å¸¸å‘ç”Ÿæ—¶è§¦å‘
+     */
+    @Override
+    public void exceptionCaught(IoSession session, Throwable cause)
+            throws Exception {
+        System.out.println("æœåŠ¡ç«¯,å‘ç”Ÿå¼‚å¸¸" + cause.getMessage());
+        session.close();
+    }
 
-	@Override
-	public void messageSent(IoSession session, Object message) throws Exception {
-		// TODO Auto-generated method stub
-		System.out.println("·şÎñ¶Ë·¢ËÍ" + "hello clinet");
+    @Override
+    public void messageSent(IoSession session, Object message) throws Exception {
+        // TODO Auto-generated method stub
+        System.out.println("æœåŠ¡ç«¯å‘é€" + "hello clinet");
 
-	}
+    }
 
 }

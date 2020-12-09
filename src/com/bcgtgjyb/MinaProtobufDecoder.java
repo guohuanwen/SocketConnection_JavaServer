@@ -9,26 +9,26 @@ public class MinaProtobufDecoder extends CumulativeProtocolDecoder {
 
 	@Override
 	protected boolean doDecode(IoSession session, IoBuffer in,
-			ProtocolDecoderOutput out) throws Exception {
+							   ProtocolDecoderOutput out) throws Exception {
 		int type = -1;
-		// Èç¹ûÃ»ÓÐ½ÓÊÕÍêHeader²¿·Ö£¨4×Ö½Ú£©£¬Ö±½Ó·µ»Øfalse
+		// å¦‚æžœæ²¡æœ‰æŽ¥æ”¶å®ŒHeaderéƒ¨åˆ†ï¼ˆ4å­—èŠ‚ï¼‰ï¼Œç›´æŽ¥è¿”å›žfalse
 		if (in.remaining() < 8) {
 			return false;
 		} else {
-			// ±ê¼Ç¿ªÊ¼Î»ÖÃ£¬Èç¹ûÒ»ÌõÏûÏ¢Ã»´«ÊäÍê³ÉÔò·µ»Øµ½Õâ¸öÎ»ÖÃ
+			// æ ‡è®°å¼€å§‹ä½ç½®ï¼Œå¦‚æžœä¸€æ¡æ¶ˆæ¯æ²¡ä¼ è¾“å®Œæˆåˆ™è¿”å›žåˆ°è¿™ä¸ªä½ç½®
 			in.mark();
-			// ÀàÐÍ
+			// ç±»åž‹
 			type = in.getInt();
-			// ¶ÁÈ¡header²¿·Ö£¬»ñÈ¡body³¤¶È
+			// è¯»å–headeréƒ¨åˆ†ï¼ŒèŽ·å–bodyé•¿åº¦
 			int bodyLength = in.getInt();
 
-			// Èç¹ûbodyÃ»ÓÐ½ÓÊÕÍêÕû£¬Ö±½Ó·µ»Øfalse
+			// å¦‚æžœbodyæ²¡æœ‰æŽ¥æ”¶å®Œæ•´ï¼Œç›´æŽ¥è¿”å›žfalse
 			if (in.remaining() < bodyLength) {
-				in.reset(); // IoBuffer position»Øµ½Ô­À´±ê¼ÇµÄµØ·½
+				in.reset(); // IoBuffer positionå›žåˆ°åŽŸæ¥æ ‡è®°çš„åœ°æ–¹
 				return false;
 			} else {
 				byte[] bodyBytes = new byte[bodyLength];
-				in.get(bodyBytes); // ¶ÁÈ¡body²¿·Ö
+				in.get(bodyBytes); // è¯»å–bodyéƒ¨åˆ†
 				if (type == 0) {
 					Notice.rq_util_heartbeat rHeartbeat = Notice.rq_util_heartbeat
 							.parseFrom(bodyBytes);
